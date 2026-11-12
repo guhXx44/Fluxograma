@@ -1,0 +1,626 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Você Decide o Futuro da IA</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #080d23, #14294a);
+      color: #eaf7ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 780px;
+      text-align: center;
+      padding: 35px 25px;
+      background: rgba(9, 18, 42, 0.94);
+      border: 1px solid #234b69;
+      border-radius: 20px;
+      box-shadow: 0 0 35px rgba(0, 210, 255, 0.12);
+    }
+
+    h1 {
+      color: #36d9ff;
+      font-size: clamp(28px, 5vw, 43px);
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      color: #65e4ff;
+      font-size: 25px;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.7;
+      color: #d1e0ee;
+    }
+
+    .subtitulo {
+      color: #8caac0;
+      font-size: 15px;
+      letter-spacing: 2px;
+    }
+
+    .icone {
+      font-size: 65px;
+      margin: 25px 0;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      max-width: 520px;
+      margin: 15px auto;
+      padding: 17px;
+      background: #087fa7;
+      color: white;
+      border: 1px solid #35c9ed;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #11b2d8;
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px #078cb0;
+    }
+
+    .secundario {
+      background: #242d43;
+      border-color: #44516a;
+    }
+
+    .secundario:hover {
+      background: #35425c;
+      box-shadow: none;
+    }
+
+    .escondido {
+      display: none;
+    }
+
+    .progresso {
+      color: #80b8ce;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .caixa {
+      background: #111f38;
+      border-left: 4px solid #36d9ff;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 25px 0;
+      text-align: left;
+    }
+
+    .historico {
+      text-align: left;
+      background: #101d33;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 25px;
+    }
+
+    .historico p {
+      font-size: 15px;
+      margin: 10px 0;
+    }
+
+    .final {
+      color: #70f0ce;
+    }
+
+    footer {
+      margin-top: 25px;
+      font-size: 12px;
+      color: #718ba4;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="container">
+
+    <!-- TELA INICIAL -->
+    <section id="inicio">
+      <div class="icone">🤖</div>
+      <h1>Você Decide o Futuro da IA</h1>
+      <p class="subtitulo">UMA AVENTURA INTERATIVA</p>
+
+      <div class="caixa">
+        <p>
+          O ano é 2049. A inteligência artificial
+          transformou o mundo.
+        </p>
+        <p>
+          João é um jovem que terá a oportunidade
+          de influenciar o futuro dessa tecnologia.
+        </p>
+        <p>
+          Cada decisão terá consequências.
+          Algumas poderão transformar a sociedade.
+          Outras poderão colocar o futuro em risco.
+        </p>
+      </div>
+
+      <h2>O futuro está nas suas mãos.</h2>
+
+      <button onclick="iniciarJogo()">
+        ▶ Iniciar aventura
+      </button>
+
+      <footer>
+        Suas escolhas. Sua história. Seu futuro.
+      </footer>
+    </section>
+
+    <!-- TELA DA HISTÓRIA -->
+    <section id="jogo" class="escondido">
+      <p class="progresso" id="progresso"></p>
+      <h1>Você Decide o Futuro da IA</h1>
+      <h2 id="tituloHistoria"></h2>
+
+      <div class="caixa">
+        <p id="textoHistoria"></p>
+      </div>
+
+      <div id="opcoes"></div>
+
+      <button class="secundario" onclick="voltar()">
+        ← Voltar uma decisão
+      </button>
+    </section>
+
+    <!-- TELA FINAL -->
+    <section id="resultado" class="escondido">
+      <div class="icone">🌎</div>
+      <h1>Você Decide o Futuro da IA</h1>
+      <p class="subtitulo">EM 2049, JOÃO...</p>
+
+      <h2 class="final" id="tituloFinal"></h2>
+
+      <div class="caixa">
+        <p id="textoFinal"></p>
+      </div>
+
+      <h2>Suas decisões</h2>
+      <div class="historico" id="historico"></div>
+
+      <button onclick="copiarResultado()">
+        📋 Copiar meu resultado
+      </button>
+
+      <button class="secundario" onclick="reiniciar()">
+        ↻ Jogar novamente
+      </button>
+    </section>
+
+  </main>
+
+  <script>
+    let etapa = "inicio";
+    let caminho = [];
+    let historicoEtapas = [];
+
+    const historia = {
+      inicio: {
+        titulo: "O começo de uma nova era",
+        texto:
+          "Em 2049, João recebe uma proposta para " +
+          "participar de um projeto de inteligência " +
+          "artificial. A tecnologia promete mudar " +
+          "a vida de milhões de pessoas. " +
+          "Qual será sua primeira atitude?",
+        opcoes: [
+          {
+            texto: "Estudar e desenvolver a IA",
+            destino: "desenvolvimento",
+            valor: "João decidiu estudar inteligência artificial."
+          },
+          {
+            texto: "Investigar os riscos da IA",
+            destino: "riscos",
+            valor: "João decidiu investigar os riscos da IA."
+          }
+        ]
+      },
+
+      desenvolvimento: {
+        titulo: "O poder do conhecimento",
+        texto:
+          "João descobre que a IA pode ajudar " +
+          "na educação, na saúde e no trabalho. " +
+          "Uma empresa oferece recursos para " +
+          "seu primeiro grande projeto. " +
+          "Em qual área ele deve investir?",
+        opcoes: [
+          {
+            texto: "Melhorar a educação",
+            destino: "educacao",
+            valor: "João escolheu melhorar a educação."
+          },
+          {
+            texto: "Transformar o mercado de trabalho",
+            destino: "trabalho",
+            valor: "João escolheu transformar o trabalho."
+          }
+        ]
+      },
+
+      riscos: {
+        titulo: "O outro lado da tecnologia",
+        texto:
+          "João percebe que a IA também pode " +
+          "ser utilizada para espalhar informações " +
+          "falsas e tomar decisões injustas. " +
+          "Ele decide agir. Qual será seu plano?",
+        opcoes: [
+          {
+            texto: "Criar regras de segurança",
+            destino: "seguranca",
+            valor: "João defendeu regras de segurança para a IA."
+          },
+          {
+            texto: "Ensinar a população sobre IA",
+            destino: "conscientizacao",
+            valor: "João decidiu conscientizar a população."
+          }
+        ]
+      },
+
+      educacao: {
+        titulo: "A escola do futuro",
+        texto:
+          "João desenvolve uma IA capaz de " +
+          "ajudar estudantes a aprender. " +
+          "Agora ele precisa decidir como " +
+          "essa ferramenta será distribuída.",
+        opcoes: [
+          {
+            texto: "Oferecer acesso gratuito",
+            destino: "finalEducacaoLivre",
+            valor: "João ofereceu educação gratuita com IA."
+          },
+          {
+            texto: "Vender a tecnologia para escolas",
+            destino: "finalEducacaoPrivada",
+            valor: "João comercializou sua tecnologia educacional."
+          }
+        ]
+      },
+
+      trabalho: {
+        titulo: "Profissões em transformação",
+        texto:
+          "A IA de João consegue automatizar " +
+          "diversas tarefas profissionais. " +
+          "Empresas demonstram interesse, " +
+          "mas trabalhadores estão preocupados. " +
+          "O que João fará?",
+        opcoes: [
+          {
+            texto: "Criar cursos para novas profissões",
+            destino: "finalRequalificacao",
+            valor: "João ajudou trabalhadores a aprender novas habilidades."
+          },
+          {
+            texto: "Priorizar a automação das empresas",
+            destino: "finalAutomacao",
+            valor: "João priorizou a automação empresarial."
+          }
+        ]
+      },
+
+      seguranca: {
+        titulo: "Quem controla a inteligência artificial?",
+        texto:
+          "João participa de um conselho " +
+          "internacional responsável por criar " +
+          "regras para sistemas inteligentes. " +
+          "Duas propostas estão sendo discutidas.",
+        opcoes: [
+          {
+            texto: "Criar regras com participação pública",
+            destino: "finalTransparencia",
+            valor: "João defendeu transparência e participação pública."
+          },
+          {
+            texto: "Deixar o controle com poucas empresas",
+            destino: "finalConcentracao",
+            valor: "João apoiou o controle concentrado da IA."
+          }
+        ]
+      },
+
+      conscientizacao: {
+        titulo: "O conhecimento deve ser compartilhado",
+        texto:
+          "João começa a ensinar pessoas " +
+          "sobre o funcionamento da IA. " +
+          "Seu projeto cresce rapidamente. " +
+          "Agora ele precisa escolher " +
+          "como continuar sua missão.",
+        opcoes: [
+          {
+            texto: "Criar uma plataforma gratuita",
+            destino: "finalConhecimento",
+            valor: "João criou uma plataforma gratuita de aprendizado."
+          },
+          {
+            texto: "Criar uma consultoria especializada",
+            destino: "finalConsultoria",
+            valor: "João fundou uma consultoria de inteligência artificial."
+          }
+        ]
+      }
+    };
+
+    const finais = {
+      finalEducacaoLivre: {
+        titulo: "O Educador do Futuro",
+        texto:
+          "João acreditou que o conhecimento " +
+          "deveria estar ao alcance de todos. " +
+          "Sua plataforma gratuita ajudou " +
+          "milhares de estudantes a aprender " +
+          "com o apoio da inteligência artificial. " +
+          "Sua decisão contribuiu para diminuir " +
+          "barreiras educacionais e criar novas " +
+          "oportunidades para a sociedade."
+      },
+
+      finalEducacaoPrivada: {
+        titulo: "O Empreendedor Tecnológico",
+        texto:
+          "João transformou sua ideia em " +
+          "uma empresa de tecnologia educacional. " +
+          "Seu projeto recebeu investimentos " +
+          "e chegou a diversas escolas. " +
+          "Entretanto, o custo da ferramenta " +
+          "dificultou o acesso de algumas pessoas. " +
+          "João percebeu que inovação e " +
+          "acessibilidade precisam caminhar juntas."
+      },
+
+      finalRequalificacao: {
+        titulo: "O Criador de Oportunidades",
+        texto:
+          "João utilizou a inteligência " +
+          "artificial para preparar trabalhadores " +
+          "para novas profissões. " +
+          "Seus cursos ajudaram muitas pessoas " +
+          "a se adaptar às mudanças tecnológicas. " +
+          "Ele demonstrou que a IA pode " +
+          "complementar as capacidades humanas " +
+          "em vez de simplesmente substituí-las."
+      },
+
+      finalAutomacao: {
+        titulo: "O Rei da Automação",
+        texto:
+          "João desenvolveu sistemas que " +
+          "tornaram empresas muito mais produtivas. " +
+          "Sua tecnologia ganhou reconhecimento " +
+          "internacional, mas também provocou " +
+          "mudanças difíceis no mercado de trabalho. " +
+          "Muitas pessoas precisaram buscar " +
+          "novas oportunidades. João aprendeu " +
+          "que o progresso exige responsabilidade social."
+      },
+
+      finalTransparencia: {
+        titulo: "O Guardião da Inteligência Artificial",
+        texto:
+          "João ajudou a estabelecer regras " +
+          "transparentes para o desenvolvimento " +
+          "da inteligência artificial. " +
+          "Pesquisadores, empresas e cidadãos " +
+          "passaram a participar das decisões. " +
+          "Sua atuação fortaleceu a confiança " +
+          "na tecnologia e incentivou " +
+          "o desenvolvimento responsável da IA."
+      },
+
+      finalConcentracao: {
+        titulo: "O Futuro nas Mãos de Poucos",
+        texto:
+          "João acreditou que grandes empresas " +
+          "teriam os recursos necessários " +
+          "para controlar sistemas avançados. " +
+          "A tecnologia evoluiu rapidamente, " +
+          "mas a falta de participação pública " +
+          "gerou preocupações sobre transparência " +
+          "e concentração de poder. " +
+          "João percebeu que decisões tecnológicas " +
+          "também afetam a democracia."
+      },
+
+      finalConhecimento: {
+        titulo: "O Multiplicador do Saber",
+        texto:
+          "João criou uma plataforma gratuita " +
+          "para ensinar inteligência artificial " +
+          "a pessoas de diferentes idades. " +
+          "Seus materiais ajudaram iniciantes " +
+          "a reconhecer informações falsas, " +
+          "utilizar ferramentas digitais " +
+          "e desenvolver projetos criativos. " +
+          "Ele mostrou que compartilhar " +
+          "conhecimento também transforma o futuro."
+      },
+
+      finalConsultoria: {
+        titulo: "O Especialista em IA",
+        texto:
+          "João fundou uma consultoria " +
+          "para ajudar organizações a utilizar " +
+          "a inteligência artificial com segurança. " +
+          "Seu trabalho melhorou processos " +
+          "e incentivou boas práticas. " +
+          "Embora seus serviços não alcançassem " +
+          "todas as pessoas, João construiu " +
+          "uma carreira dedicada à inovação " +
+          "e ao uso responsável da tecnologia."
+      }
+    };
+
+    function mostrarTela(id) {
+      document.getElementById("inicio")
+        .classList.add("escondido");
+      document.getElementById("jogo")
+        .classList.add("escondido");
+      document.getElementById("resultado")
+        .classList.add("escondido");
+
+      document.getElementById(id)
+        .classList.remove("escondido");
+    }
+
+    function iniciarJogo() {
+      caminho = [];
+      historicoEtapas = [];
+      mostrarEtapa("inicio");
+    }
+
+    function mostrarEtapa(id) {
+      etapa = id;
+
+      if (finais[id]) {
+        mostrarFinal(id);
+        return;
+      }
+
+      const cena = historia[id];
+
+      mostrarTela("jogo");
+
+      document.getElementById("tituloHistoria")
+        .textContent = cena.titulo;
+
+      document.getElementById("textoHistoria")
+        .textContent = cena.texto;
+
+      document.getElementById("progresso")
+        .textContent = "Decisão " + (caminho.length + 1) + " de 3";
+
+      const opcoes = document.getElementById("opcoes");
+      opcoes.innerHTML = "";
+
+      cena.opcoes.forEach(opcao => {
+        const botao = document.createElement("button");
+        botao.textContent = opcao.texto;
+
+        botao.onclick = function() {
+          historicoEtapas.push(id);
+          caminho.push(opcao.valor);
+          mostrarEtapa(opcao.destino);
+        };
+
+        opcoes.appendChild(botao);
+      });
+    }
+
+    function mostrarFinal(id) {
+      etapa = id;
+      mostrarTela("resultado");
+
+      const final = finais[id];
+
+      document.getElementById("tituloFinal")
+        .textContent = final.titulo;
+
+      document.getElementById("textoFinal")
+        .textContent = final.texto;
+
+      const historico = document.getElementById("historico");
+      historico.innerHTML = "";
+
+      caminho.forEach((decisao, indice) => {
+        const paragrafo = document.createElement("p");
+        paragrafo.textContent =
+          (indice + 1) + ". " + decisao;
+        historico.appendChild(paragrafo);
+      });
+    }
+
+    function voltar() {
+      if (historicoEtapas.length === 0) {
+        mostrarTela("inicio");
+        return;
+      }
+
+      const anterior = historicoEtapas.pop();
+      caminho.pop();
+      mostrarEtapa(anterior);
+    }
+
+    function reiniciar() {
+      caminho = [];
+      historicoEtapas = [];
+      etapa = "inicio";
+      mostrarTela("inicio");
+    }
+
+    function copiarResultado() {
+      const final = finais[etapa];
+
+      if (!final) return;
+
+      const texto =
+        "VOCÊ DECIDE O FUTURO DA IA\n\n" +
+        "Resultado: " + final.titulo + "\n\n" +
+        final.texto + "\n\n" +
+        "Minhas escolhas:\n" +
+        caminho.map((item, i) =>
+          (i + 1) + ". " + item
+        ).join("\n");
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(texto)
+          .then(() => alert("Resultado copiado!"))
+          .catch(() => copiarAlternativo(texto));
+      } else {
+        copiarAlternativo(texto);
+      }
+    }
+
+    function copiarAlternativo(texto) {
+      const campo = document.createElement("textarea");
+      campo.value = texto;
+      document.body.appendChild(campo);
+      campo.select();
+
+      try {
+        const sucesso = document.execCommand("copy");
+        alert(sucesso
+          ? "Resultado copiado!"
+          : "Não foi possível copiar o resultado.");
+      } catch (erro) {
+        alert("Não foi possível copiar o resultado.");
+      }
+
+      document.body.removeChild(campo);
+    }
+  </script>
+
+</body>
+</html>
